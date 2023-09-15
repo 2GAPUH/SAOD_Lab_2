@@ -34,6 +34,10 @@ int CheckGroup(char &symb)
     case 'Þ':
     case 'ÿ':
     case 'ß':
+    case 'û':
+    case 'Û':
+
+
         return 4;
 
     case 'ë':
@@ -115,34 +119,38 @@ int AddSyllable(const char fileInputName[], const char fileOutputName[])
     {
         fscanf(inputF, "%s", buffer);
         int stringLen = strlen(buffer);
+        bool flag = 0;
+        if (buffer[stringLen - 1] == '.' || buffer[stringLen - 1] == ',' || buffer[stringLen - 1] == '!' || buffer[stringLen - 1] == '?')
+        {
+            stringLen--;
+            flag = 1;
+        }
 
         if (stringLen >= 4)
         {
             for (int i = 0; i < stringLen;i++)
                 subbuf[i] = CheckGroup(buffer[i]);
 
-            fprintf_s(outputF, "%c", buffer[0]);
-            for (int i = 1; i < stringLen - 2; i++)
-            {
+            for(int i = 0; i < stringLen - 1; i++)
+            { 
                 fprintf_s(outputF, "%c", buffer[i]);
-                if ((subbuf[i] - subbuf[i + 1] == 0 && subbuf[i] == 4) ||
-                    (subbuf[i] - subbuf[i + 1] > 0))
-                {
-                    if (subbuf[i + 1] != 'ü' && subbuf[i + 1] != 'ú')
-                        if(i != stringLen - 3)
-                            if(i != 1)
-                                fprintf_s(outputF, "-");
-                            else if(subbuf[1] == 4 || subbuf[0] == 4)
-                                fprintf_s(outputF, "-");
-                        else if((subbuf[stringLen - 1] == 4 || subbuf[stringLen - 2] == 4))
-                            fprintf_s(outputF, "-");
 
-                    else i++;
-                }
+                if(subbuf[i] == 4)
+                    fprintf_s(outputF, "-", buffer[i]);
+
             }
-            fprintf_s(outputF, "%c%c ", buffer[stringLen - 2], buffer[stringLen-1]);
+
+            fprintf_s(outputF, "%c", buffer[stringLen - 1]);
+
+
+            if(flag)
+                fprintf_s(outputF, "%c ", buffer[stringLen]);
+            else
+                fprintf_s(outputF, " ");
+
 
         }
+
         else
             fprintf_s(outputF, "%s ", buffer);
 
